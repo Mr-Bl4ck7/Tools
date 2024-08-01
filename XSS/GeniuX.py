@@ -1,7 +1,8 @@
 import os
 import random
 import string
-from urllib.parse import quote
+import html
+from urllib.parse import quote  # Import URL encoding functions
 
 # ANSI escape codes for colors
 ORANGE = '\033[38;5;208m'  # Orange
@@ -9,6 +10,7 @@ GREEN = '\033[32m'         # Green
 LIGHT_BLUE = '\033[94m'    # Light Blue
 BLUE = '\033[34m'          # Blue
 RESET = '\033[0m'          # Reset to default color
+RED = '\033[31m'           # Red
 
 # Default signature
 DEFAULT_SIGNATURE = 'POC by: Bl4ck7'
@@ -42,7 +44,7 @@ def random_payload(signature):
     return payload
 
 def encode_payload(payload):
-    return quote(payload)
+    return quote(payload)  # Use URL encoding
 
 def generate_payloads(count, encode, signature):
     normal_payloads = []
@@ -55,7 +57,7 @@ def generate_payloads(count, encode, signature):
             encoded_payloads.append(encode_payload(payload))
 
         # Print live counter
-        print(f'{ORANGE}[!] {GREEN}Generating Payloads: {i + 1}/{count}{RESET}', end='')
+        print(f'{RED}[!] {ORANGE}Generating Payloads: {i + 1}/{count}{RESET}', end='\r')
 
     return normal_payloads, encoded_payloads
 
@@ -81,16 +83,18 @@ def main():
     if add_signature == 'yes':
         custom_signature = input(f"{BLUE}  [-] {ORANGE}Enter Your Custom Signature (e.g., POC By: YourName): {RESET}").strip()
     
-    try:
-        count = int(input(f"{LIGHT_BLUE}[+] {ORANGE}How Many Payloads Do You Need To Generate? {RESET}"))
-        encode = input(f"{LIGHT_BLUE}[+] {ORANGE}Do You Want Encoded Version (yes/no)? {RESET}").strip().lower() == 'yes'
+    while True:
+        try:
+            count = int(input(f"{LIGHT_BLUE}[+] {ORANGE}How Many Payloads Do You Need To Generate? {RESET}"))
+            encode = input(f"{LIGHT_BLUE}[+] {ORANGE}Do You Want Encoded Version (yes/no)? {RESET}").strip().lower() == 'yes'
 
-        normal_payloads, encoded_payloads = generate_payloads(count, encode, custom_signature)
-        save_payloads(normal_payloads, encoded_payloads, count)
+            normal_payloads, encoded_payloads = generate_payloads(count, encode, custom_signature)
+            save_payloads(normal_payloads, encoded_payloads, count)
 
-        print(f'\n{GREEN}[+] {ORANGE}Payloads Generated And Saved Successfully In The "payloads" Folder.{RESET}')
-    except ValueError:
-        print(f'{RED}[!] Invalid Input. Please Enter A Valid Number For Payload Count.{RESET}')
+            print(f'\n{GREEN}[+] {ORANGE}Payloads Generated And Saved Successfully In The "payloads" Folder.{RESET}')
+            break
+        except ValueError:
+            print(f'{RED}[!] Invalid Input. Please Enter A Valid Number For Payload Count.{RESET}')
 
 if __name__ == "__main__":
     main()
